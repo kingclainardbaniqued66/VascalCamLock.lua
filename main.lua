@@ -1,4 +1,4 @@
--- Vascal-Style CamLock by @yourname
+-- Glockz-Style CamLock (Fixed) by @kingclainardbaniqued66
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
@@ -10,90 +10,35 @@ local CamLockEnabled = false
 local Target = nil
 local LockKey = Enum.KeyCode.RightShift
 
--- Create UI
-local gui = Instance.new("ScreenGui", LP:WaitForChild("PlayerGui"))
-gui.Name = "CamLockUI"
-
-local button = Instance.new("TextButton", gui)
-button.Size = UDim2.new(0, 120, 0, 40)
-button.Position = UDim2.new(0, 15, 0, 100)
-button.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-button.Text = "CamLock (OFF)"
-button.TextColor3 = Color3.new(1,1,1)
-button.TextSize = 16
-button.Font = Enum.Font.SourceSansBold
-button.Active = true
-button.Draggable = true
-
--- Toggle function
-local function ToggleCamLock()
-	CamLockEnabled = not CamLockEnabled
-	if not CamLockEnabled then
-		Target = nil
-	end
-	button.Text = CamLockEnabled and "CamLock (ON)" or "CamLock (OFF)"
-end
-
--- Input toggles
-button.MouseButton1Click:Connect(ToggleCamLock)
-UIS.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == LockKey then
-		ToggleCamLock()
-	end
-end)
-
--- Find closest player
-local function GetClosestPlayer()
-	local closest, dist = nil, math.huge
-	for _, v in pairs(Players:GetPlayers()) do
-		if v ~= LP and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-			local pos, visible = Camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
-			if visible then
-				local mag = (Vector2.new(pos.X, pos.Y) - UIS:GetMouseLocation()).Magnitude
-				if mag < dist then
-					closest = v
-					dist = mag
-				end
-			end
--- Vascal-Style CamLock by @kingclainardbaniqued66
-local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
-local RS = game:GetService("RunService")
-local LP = Players.LocalPlayer
-local Mouse = LP:GetMouse()
-local Camera = workspace.CurrentCamera
-
-local CamLockEnabled = false
-local Target = nil
-local LockKey = Enum.KeyCode.RightShift
-
--- Create UI
+-- UI
 local gui = Instance.new("ScreenGui", LP:WaitForChild("PlayerGui"))
 gui.Name = "CamLockUI"
 gui.ResetOnSpawn = false
 
 local button = Instance.new("TextButton", gui)
-button.Size = UDim2.new(0, 130, 0, 40)
-button.Position = UDim2.new(0, 15, 0, 100)
-button.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-button.Text = "CamLock (OFF)"
+button.Size = UDim2.new(0, 140, 0, 40)
+button.Position = UDim2.new(0, 20, 0, 100)
+button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 button.TextColor3 = Color3.new(1, 1, 1)
-button.TextSize = 16
 button.Font = Enum.Font.SourceSansBold
-button.Active = true
+button.TextSize = 16
+button.Text = "CamLock (OFF)"
 button.Draggable = true
+button.Active = true
 
--- Toggle function
+-- Toggle
 local function ToggleCamLock()
 	CamLockEnabled = not CamLockEnabled
-	if not CamLockEnabled then
+	if CamLockEnabled then
+		Target = nil -- Reset to pick new one
+		button.Text = "CamLock (ON)"
+	else
 		Target = nil
+		button.Text = "CamLock (OFF)"
 	end
-	button.Text = CamLockEnabled and "CamLock (ON)" or "CamLock (OFF)"
 end
 
--- Button & keybind toggle
+-- Input
 button.MouseButton1Click:Connect(ToggleCamLock)
 UIS.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then return end
@@ -102,17 +47,17 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
 	end
 end)
 
--- Find closest player only ONCE when you lock
+-- Find closest player to mouse
 local function GetClosestPlayer()
-	local closest, dist = nil, math.huge
-	for _, v in pairs(Players:GetPlayers()) do
-		if v ~= LP and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-			local pos, visible = Camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+	local closest, shortest = nil, math.huge
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= LP and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+			local pos, visible = Camera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
 			if visible then
-				local mag = (Vector2.new(pos.X, pos.Y) - UIS:GetMouseLocation()).Magnitude
-				if mag < dist then
-					closest = v
-					dist = mag
+				local dist = (Vector2.new(pos.X, pos.Y) - UIS:GetMouseLocation()).Magnitude
+				if dist < shortest then
+					shortest = dist
+					closest = plr
 				end
 			end
 		end
@@ -120,7 +65,7 @@ local function GetClosestPlayer()
 	return closest
 end
 
--- Lock-on logic
+-- Lock-on
 RS.RenderStepped:Connect(function()
 	if CamLockEnabled then
 		if not Target then
@@ -130,22 +75,5 @@ RS.RenderStepped:Connect(function()
 		if Target and Target.Character and Target.Character:FindFirstChild("HumanoidRootPart") then
 			Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Character.HumanoidRootPart.Position)
 		end
-	end
-end)
-tance.new("TextButton")
-ToggleButton.Size = UDim2.new(0, 130, 0, 40)
-ToggleButton.Position = UDim2.new(0, 15, 0, 100)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-ToggleButton.Text = "CamLock (OFF)"
-ToggleButton.TextColor3 = Color3.new(1,1,1)
-ToggleButton.TextSize = 16
-ToggleButton.Font = Enum.Font.SourceSansBold
-ToggleButton.Parent = ScreenGui
-ToggleButton.Active = true
-ToggleButton.Draggable = true
-
--- Get Closest Player to Mouse
-local function GetClosestPlayer()
-rame = CFrame.new(Camera.CFrame.Position, Target.Character.Head.Position)
 	end
 end)
